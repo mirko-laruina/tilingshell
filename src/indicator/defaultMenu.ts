@@ -222,19 +222,19 @@ export default class DefaultMenu implements CurrentMenu {
         );
 
         this._signals.connect(Main.layoutManager, 'monitors-changed', () => {
-            if (!enableScalingFactor) return;
+            if (enableScalingFactor) {
+                const monitor = Main.layoutManager.findMonitorForActor(
+                    this._container,
+                );
+                const scalingFactor = getMonitorScalingFactor(
+                    monitor?.index || Main.layoutManager.primaryIndex,
+                );
+                enableScalingFactorSupport(this._container, scalingFactor);
 
-            const monitor = Main.layoutManager.findMonitorForActor(
-                this._container,
-            );
-            const scalingFactor = getMonitorScalingFactor(
-                monitor?.index || Main.layoutManager.primaryIndex,
-            );
-            enableScalingFactorSupport(this._container, scalingFactor);
-
-            this._updateScaling();
-            if (this._layoutsRows.length !== getMonitors().length)
-                this._drawLayouts();
+                this._updateScaling();
+                if (this._layoutsRows.length !== getMonitors().length)
+                    this._drawLayouts();
+            }
 
             // compute monitors details and update labels asynchronously (if we have successful results...)
             this._computeMonitorsDetails();
